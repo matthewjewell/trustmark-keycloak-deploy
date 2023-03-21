@@ -1,0 +1,79 @@
+version: "3.9"
+
+services:
+    keycloak-mysql:
+        image: "mysql:latest"
+        container_name: "keycloak-mysql"
+        hostname: "keycloak-mysql"
+        restart:  "unless-stopped"
+        networks:
+            - "keycloak-network"
+        environment:
+            MYSQL_ROOT_PASSWORD: "password"
+            MYSQL_USER: "mysql"
+            MYSQL_PASSWORD: "password"
+            MYSQL_DATABASE: "keycloak"
+        volumes:
+            - ".docker/keycloak-mysql/var/lib/mysql:/var/lib/mysql"
+
+    keycloak-keycloak:
+        image: "quay.io/keycloak/keycloak:latest"
+        container_name: "keycloak-keycloak"
+        hostname: "keycloak-keycloak"
+        restart:  "unless-stopped"
+        ports:
+            - "8443:8443"
+            - "8282:8080"
+        networks:
+            - "keycloak-network"
+        environment:
+            JAVA_OPTS_APPEND: "-Dcom.redhat.fips=false"
+            KEYCLOAK_ADMIN: "administrator"
+            KEYCLOAK_ADMIN_PASSWORD: "administrator"
+        volumes:
+            - "./docker/keycloak-keycloak/etc/x509/https/keycloak-keycloak.crt.pem:/etc/x509/https/tls.crt"
+            - "./docker/keycloak-keycloak/etc/x509/https/keycloak-keycloak.key.pem:/etc/x509/https/tls.key"
+            - "./docker/keycloak-keycloak/opt/keycloak/data/import:/opt/keycloak/data/import"
+            - "./docker/keycloak-keycloak/opt/keycloak/themes/tf:/opt/keycloak/themes/tf"
+        command:
+          [ "start",
+            # https://www.keycloak.org/server/enabletls
+            "--https-certificate-file=/etc/x509/https/tls.crt",
+            "--https-certificate-key-file=/etc/x509/https/tls.key",
+            "--http-relative-path=/auth",
+            # https://www.keycloak.org/server/db
+            "--db=mysql",
+            "--db-url-host=keycloak-mysql",
+            "--db-url-port=3306",
+            "--db-url-database=keycloak",
+            "--db-username=mysql" ,
+            "--db-password=password",
+            # https://www.keycloak.org/server/hostname
+            "--hostname-url=https://host.docker.internal/auth/",
+            "--hostname-admin-url=https://host.docker.internal/auth/",
+            "--hostname-strict-backchannel=true",
+            # https://www.keycloak.org/docs/latest/server_development/#creating-a-theme
+            # "--spi-theme-static-max-age=-1",
+            # "--spi-theme-cache-themes=false",
+            # "--spi-theme-cache-templates=false",
+            "--import-realm"
+          ]
+
+    userinfo:
+       build:
+         context: ./userinfo
+         dockerfile: Dockerfile
+       restart:  "unless-stopped"
+       container_name: "userinfo"
+       ports:
+          - "8888:8080"
+       environment:
+         SPRING_BOOT_CONTEXT_PATH:     "/userinfo"
+         SPRING_SECURITY_CLIENT_ID:    "userinfo"
+         SPRING_SECURITY_REDIRECT_URI: "http://host.docker.internal/userinfo/login/oauth2/code/userinfo"
+         SPRING_SECURITY_ISSUER_URI:   "https://host.docker.internal/auth/realms/trustmark"
+
+
+networks:
+    keycloak-network:
+        name: "keycloak-network"
