@@ -27,7 +27,7 @@ If you have setup Keycloak to be proxied you would want to proxy the sub-path `/
 
 Open `https://host.docker.internal/auth/`. You may log in with username `administrator` and the password specified in the docker-compose.yml file:
 
-```KEYCLOAK_ADMIN_PASSWORD: "administrator"
+```KEYCLOAK_ADMIN_PASSWORD: "value-here"
 ```
 
 Users cannot be saved within realm exports, so to login to the trustmark tools, you will need to create users in the `trustmark` realm, or it is recommended to configure keycloak for SSO from your enterprise.  See the [TBD] to do that. 
