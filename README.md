@@ -22,7 +22,7 @@ As configured in this deployer, Keycloak will start up with a Trustmark Realm wi
 Run the docker container as follows:
 
 ```
-shell$ docker compose up -d --build 
+         shell$ docker compose up -d --build 
 ```
 
 If you have setup Keycloak to be proxied you would want to proxy the sub-path `/auth`.   Feel free to contact help@trustmarkinitiative.org for help setting up the proxying configuration for Keycloak.  You may also use a dockerized instance of httpd for proxying, sample configuration for such a deploy are available in the ```docker/keycloak-httpd``` directory.
@@ -37,7 +37,7 @@ Users cannot be saved within realm exports, so to login to the trustmark tools, 
 
 Users must be assigned roles or be placed into groups that have roles pre-assigned to be able to use the tools.  See [TBD2] on how to assign users roles and groups.
 
-The "Super Admin" group will make the user an admin in all tools.  This is useful for initial deploys, but if you intend for a variety of people to use the tools, you will need to assign individual roles for them.
+The "Super Admin" group will make the user an admin in all tools.  This is useful for initial deploys, but if you intend for a variety of people to have varying levels of access to the the tools, you will need to assign individual roles for them, or derive those role assignments from attributes.
 
 In addition to configuring users within the Keycloak `trustmark` realm, you will need to configure client for all trustmark tools using Keycloak for sign-on.  All 2.0 version Trustmark Tools depend on Keycloak for login.  Typically configuring each client can be as easy as setting the redirect-uri for the tool within keycloak, as it assumes each tool will use a simple client id for each tool.
 
