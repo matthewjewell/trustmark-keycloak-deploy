@@ -49,9 +49,10 @@ services:
             "--db-username=mysql" ,
             "--db-password=password",
             # https://www.keycloak.org/server/hostname
-            "--hostname-url=https://host.docker.internal/auth/",
-            "--hostname-admin-url=https://host.docker.internal/auth/",
-            "--hostname-strict-backchannel=true",
+            # "--hostname-url=https://host.docker.internal/auth/",
+            # "--hostname-admin-url=https://host.docker.internal/auth/",
+            # "--hostname-strict-backchannel=true",
+            "--hostname-strict=false",
             # https://www.keycloak.org/docs/latest/server_development/#creating-a-theme
             # "--spi-theme-static-max-age=-1",
             # "--spi-theme-cache-themes=false",
