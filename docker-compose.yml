@@ -31,6 +31,7 @@ services:
             KEYCLOAK_ADMIN: "administrator"
             KEYCLOAK_ADMIN_PASSWORD: "administrator"
         volumes:
+            - keycloak:/opt/keycloak/data/h2
             - "./docker/keycloak-keycloak/etc/x509/https/keycloak-keycloak.crt.pem:/etc/x509/https/tls.crt"
             - "./docker/keycloak-keycloak/etc/x509/https/keycloak-keycloak.key.pem:/etc/x509/https/tls.key"
             - "./docker/keycloak-keycloak/opt/keycloak/data/import:/opt/keycloak/data/import"
@@ -78,3 +79,7 @@ services:
 networks:
     keycloak-network:
         name: "keycloak-network"
+
+volumes:
+  keycloak:
+    external: true
